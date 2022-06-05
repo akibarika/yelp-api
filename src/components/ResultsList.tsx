@@ -1,6 +1,8 @@
 import * as React from 'react';
-import {View, Text, StyleSheet, FlatList} from 'react-native';
+import {View, Text, StyleSheet, FlatList, TouchableOpacity} from 'react-native';
 import ResultsDetail from './ResultsDetail';
+import {SearchScreenProps} from '../RootStackPrams';
+import {useNavigation} from '@react-navigation/native';
 
 type ResultsListComponentProps = {
   title: string;
@@ -15,6 +17,8 @@ type ResultsListComponentProps = {
 };
 const ResultsList: React.FC<ResultsListComponentProps> = (props: ResultsListComponentProps) => {
   const {title, results} = props;
+  if (results.length === 0) return null;
+  const navigation = useNavigation<SearchScreenProps>();
   return <View style={styles.container}>
     <Text style={styles.title}>{title}</Text>
     <FlatList
@@ -23,7 +27,14 @@ const ResultsList: React.FC<ResultsListComponentProps> = (props: ResultsListComp
       data={results}
       keyExtractor={(result) => result.id}
       renderItem={({item}) => {
-        return <ResultsDetail result={item}/>
+        return (
+          <TouchableOpacity onPress={() => navigation.navigate('ResultsShow', {
+            id: item.id,
+            name: item.name,
+          })}>
+            <ResultsDetail result={item}/>
+          </TouchableOpacity>
+        )
       }}
     />
   </View>
